@@ -16,6 +16,7 @@ namespace CoreWebsite.Controllers
     public class HomeController : Controller
     {
         private IConfiguration _configuration;
+        //private OwnedGamesSummary oOwnedGamesSummary;
 
         public HomeController(IConfiguration Configuration)
         {
@@ -26,13 +27,6 @@ namespace CoreWebsite.Controllers
         {
             return View();
         }
-
-        //public IActionResult About()
-        //{
-        //    ViewData["Message"] = "Your application description page.";
-
-        //    return View();
-        //}
 
         public IActionResult Contact()
         {
@@ -48,6 +42,15 @@ namespace CoreWebsite.Controllers
 
         public async Task<ActionResult> About()
         {
+            string sSteamId = _configuration["Steam:SteamId"];
+            OwnedGamesSummary oOwnedGamesSummary = await GetOwnedGames(sSteamId);
+            SteamPlayerSummaries oSteamPlayerSummaries = await GetPlayerSummaries(sSteamId);
+
+            return View(oOwnedGamesSummary);
+        }
+
+        private async Task<OwnedGamesSummary> GetOwnedGames(string steamId)
+        {
             GetOwnedGamesResponse oResponse = new GetOwnedGamesResponse();
 
             using (var client = new HttpClient())
@@ -58,8 +61,8 @@ namespace CoreWebsite.Controllers
 
                 //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
                 string sAPIKey = _configuration["Steam:ApiKey"];
-                string sSteamId = _configuration["Steam:SteamId"];
-                HttpResponseMessage Res = await client.GetAsync("IPlayerService/GetOwnedGames/v0001/?key=" + sAPIKey + "&steamid=" + sSteamId + "&format=json&include_appinfo=1");
+                
+                HttpResponseMessage Res = await client.GetAsync("IPlayerService/GetOwnedGames/v0001/?key=" + sAPIKey + "&steamid=" + steamId + "&format=json&include_appinfo=1");
 
                 //Test Call https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=573995896871E7891B78DA9E841FCEB5&steamid=76561197960434622&format=json&include_appinfo=1
 
@@ -72,10 +75,43 @@ namespace CoreWebsite.Controllers
                     //Deserializing the response recieved from web api and storing into the Employee list  
                     oResponse = JsonConvert.DeserializeObject<GetOwnedGamesResponse>(SteamResponse);
 
-                    Console.WriteLine(oResponse.Response.game_count);
+                    //Console.WriteLine(oResponse.Response.game_count);
                 }
 
-                return View(oResponse.Response);
+                return oResponse.Response;
+            }
+        }
+
+        private async Task<SteamPlayerSummaries> GetPlayerSummaries(string steamIds)
+        {
+            GetSteamPlayerSummariesResponse oResponse = new GetSteamPlayerSummariesResponse();
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("http://api.steampowered.com/");
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                //Sending request to find web api REST service resource GetAllEmployees using HttpClient  
+                string sAPIKey = _configuration["Steam:ApiKey"];
+
+                HttpResponseMessage Res = await client.GetAsync("ISteamUser/GetPlayerSummaries/v0002/?key=" + sAPIKey + "&steamids=" + steamIds + "&format=json");
+
+                //Test Call https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=573995896871E7891B78DA9E841FCEB5&steamids=76561197960435530
+
+                //Checking the response is successful or not which is sent using HttpClient  
+                if (Res.IsSuccessStatusCode)
+                {
+                    //Storing the response details recieved from web api   
+                    var SteamResponse = Res.Content.ReadAsStringAsync().Result;
+
+                    //Deserializing the response recieved from web api and storing into the Employee list  
+                    oResponse = JsonConvert.DeserializeObject<GetSteamPlayerSummariesResponse>(SteamResponse);
+
+                    //Console.WriteLine(oResponse.Response.game_count);
+                }
+
+                return oResponse.Response;
             }
         }
     }

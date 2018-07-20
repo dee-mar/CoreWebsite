@@ -62,7 +62,7 @@ namespace CoreWebsite.Models.SteamApi
         public string avatarfull { get; set; }
         public int personastate { get; set; }
         public string realname { get; set; }
-        public int primaryclanid { get; set; }
+        public long primaryclanid { get; set; }
         public double timecreated { get; set; }
         public int personastateflags { get; set; }
         public string loccountrycode { get; set; }
