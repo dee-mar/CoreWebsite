@@ -1,0 +1,79 @@
+﻿@model  CoreWebsite.Models.SteamApi.OwnedGamesSummary
+
+@{
+    ViewData["Title"] = "About";
+}
+<h2>@ViewData["Title"]</h2>
+@*<h3>@ViewData["Message"]</h3>*@
+
+<p>Here's some info on who David Mar is and what he can do. Contact me at <a href="mailto:hitmeup@davidmar.cool">hitmeup@davidmar.cool</a></p>
+
+<h3>
+    Skills
+</h3>
+<p>
+    For the purposes of demonstrating a responsive grid, David has three primary knowledge areas
+</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Tech</h4>
+            Programming, project managment
+        </div>
+        <div class="col-md-4">
+            <h4>Improv</h4>
+            Performing, public speaking, 50% of D&D
+        </div>
+        <div class="col-md-4">
+            <h4>Other Assorted Nerd Stuff</h4>
+            Comics, games, the other 50% of D&D
+        </div>
+    </div>
+</div>
+
+
+<h4>
+    Games
+</h4>
+<p>Wow! A summary of all @Html.DisplayFor(Model => Model.game_count) of my steam games!</p>
+<div class="container">
+    <dv class="row">
+        <div class="col-md-6">
+            Name
+        </div>
+        <div class="col-md-6">
+            Playtime
+        </div>
+    </dv>
+    @foreach (var item in Model.games)
+    {
+        <div class="row">
+            <div class="col-md-2">
+                <img src="@item.img_icon_url" alt="@item.name icon" />
+            </div>
+            <div class="col-md-5">
+                @item.name
+            </div>
+            <div class="col-md-5">
+                @item.playtime_2weeks
+            </div>
+        </div>
+    }
+</div>
+
+
+@*<h3>
+        Some tweets
+    </h3>
+    <div class="container"
+        <div class="row">
+            <div class="col-md-6">
+                <a class="twitter-timeline" data-height="1000" href="https://twitter.com/TwitterDev?ref_src=twsrc%5Etfw">Tweets by TwitterDev</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+            <div class="col-md-6">
+                <a class="twitter-timeline" data-height="1000" href="https://twitter.com/TwitterDev/lists/national-parks?ref_src=twsrc%5Etfw">A Twitter List by TwitterDev</a>
+                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+            </div>
+        </div>
+    </div>*@
